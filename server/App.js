@@ -26,8 +26,8 @@ ConnectDB();
 // Middlewares
 app.use(express.json())
 const allowedOrigins = [
-    'https://todo-app-henna-phi.vercel.app',
-    'http://localhost:3000',
+    "https://todo-app-henna-phi.vercel.app",
+    "http://localhost:3000",
   ];
   
   const corsOptions = {
@@ -35,18 +35,18 @@ const allowedOrigins = [
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   };
   
   app.use(cors(corsOptions));
   
-  // Manejar manualmente las solicitudes preflight OPTIONS
-  app.options('*', (req, res) => {
+  // 🔹 Asegurar respuestas preflight OPTIONS
+  app.options("*", (req, res) => {
     res.header("Access-Control-Allow-Origin", req.headers.origin);
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
