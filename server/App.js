@@ -13,7 +13,7 @@ import { loginLimiter } from "./middleware/rateLimit.js";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 8009;
+const port =  8009;
 
 ConnectDB();
 
