@@ -6,14 +6,13 @@ import * as yup from "yup";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "@/app/context/AuthContext";
 
-// 🔹 Esquema de validación con YUP
+
 const authSchema = yup.object().shape({
   email: yup.string().email("Email inválido").required("El email es obligatorio"),
   password: yup.string().min(6, "Mínimo 6 caracteres").required("La contraseña es obligatoria"),
-  name: yup.string().when("isRegister", {
-    is: true,
-    then: yup.string().required("El nombre es obligatorio"),
-  }),
+  name: yup.string().when("isRegister", (isRegister, schema) => 
+    isRegister ? schema.required("El nombre es obligatorio") : schema
+  ),
 });
 
 export default function AuthPage() {
