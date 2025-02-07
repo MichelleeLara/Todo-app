@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser(parsedUser);
                 setToken(storedToken);
             } catch (error) {
-                console.error("❌ Error al parsear datos de usuario:", error);
+                console.error("Error al parsear datos de usuario:", error);
                 localStorage.removeItem("user");
                 localStorage.removeItem("token");
             }
@@ -49,13 +49,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.setItem("user", JSON.stringify(data.user));
             setUser(data.user);
             return { success: true, message: "Cuenta creada exitosamente." };
-        } catch (error: any) {
-            return {
-                success: false,
-                message: error.response?.data?.message || "Error desconocido al registrar el usuario.",
-            };
+        } catch (error: unknown) {  // ✅ Reemplazar `any` por `unknown`
+            if (error instanceof Error) { // 🔹 Verificar que es una instancia de Error
+                return {
+                    success: false,
+                    message: (error as any).response?.data?.message || "Error desconocido al registrar el usuario.",
+                };
+            }
+            return { success: false, message: "Ocurrió un error inesperado." };
         }
     };
+    
 
     const login = async (formData: { email: string; password: string }) => {
         try {
@@ -66,14 +70,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setToken(data.token);
             router.push("/dashboard"); // 🔹 Redirigir a página protegida tras login
             return { success: true, message: "Inicio de sesión exitoso." };
-        } catch (error: any) {
-            return {
-                success: false,
-                message: error.response?.data?.message || "Credenciales incorrectas.",
-            };
+        } catch (error: unknown) { // ✅ Reemplazar `any` por `unknown`
+            if (error instanceof Error) { // 🔹 Verificar que es una instancia de Error
+                return {
+                    success: false,
+                    message: (error as any).response?.data?.message || "Credenciales incorrectas.",
+                };
+            }
+            return { success: false, message: "Ocurrió un error inesperado." };
         }
     };
-
+    
     const logout = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
