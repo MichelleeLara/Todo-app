@@ -25,34 +25,18 @@ ConnectDB();
 
 // Middlewares
 app.use(express.json())
-const allowedOrigins = [
-    "https://todo-app-henna-phi.vercel.app",
-    "http://localhost:3000",
-  ];
-  
-  const corsOptions = {
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  };
-  
-  app.use(cors(corsOptions));
-  
-  // 🔹 Asegurar respuestas preflight OPTIONS
-  app.options("*", (req, res) => {
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.status(200).end();
-  });
+import cors from "cors";
+
+app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE"], allowedHeaders: ["Content-Type", "Authorization"], credentials: true }));
+
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.status(200).end();
+});
+
 app.use(cookieParser());
 app.use(helmet());
 
