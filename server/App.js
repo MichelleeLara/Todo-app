@@ -25,16 +25,13 @@ ConnectDB();
 
 // Middlewares
 app.use(express.json())
-const corsOptions = {
+app.use(cors({
     origin: function (origin, callback) {
       const allowedOrigins = [
         'https://todo-app-henna-phi.vercel.app/',
         'http://localhost:3000',
       ];
-      if (!origin) {
-        // Permitir solicitudes desde herramientas como Postman, pero no desde navegadores sin origen
-        callback(null, true);
-      } else if (allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
@@ -43,18 +40,7 @@ const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
-  };
-  
-  app.use(cors(corsOptions));
-  
-  // Permitir preflight requests
-  app.options('*', (req, res) => {
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.status(200).end();
-  });
+  }));
 app.use(cookieParser());
 app.use(helmet());
 
