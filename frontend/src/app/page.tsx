@@ -10,9 +10,12 @@ import { AuthContext } from "@/app/context/AuthContext";
 const authSchema = yup.object().shape({
   email: yup.string().email("Email inválido").required("El email es obligatorio"),
   password: yup.string().min(6, "Mínimo 6 caracteres").required("La contraseña es obligatoria"),
-  name: yup.string().when("isRegister", (isRegister, schema) => 
-    isRegister ? schema.required("El nombre es obligatorio") : schema
-  ),
+  name: yup.string().when('$isRegister', {
+    is: true,
+    then: (schema) => schema.required("El nombre es obligatorio"),
+    otherwise: (schema) => schema
+  }),
+  isRegister: yup.boolean()
 });
 
 export default function AuthPage() {
