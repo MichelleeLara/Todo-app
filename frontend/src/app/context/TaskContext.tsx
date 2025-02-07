@@ -12,24 +12,25 @@ interface Task {
 
 interface TaskContextType {
   tasks: Task[];
-  fetchTasks: () => void;
-  createTask: (title: string) => void;
-  updateTask: (taskId: string, title: string, status: "pending" | "completed") => void;
-  deleteTask: (taskId: string) => void;
-  addSubtask: (taskId: string, title: string) => void;
-  updateSubtask: (taskId: string, subtaskId: string, data: { title?: string; status?: "pending" | "completed" }) => void;
-  deleteSubtask: (taskId: string, subtaskId: string) => void;
-  addComment: (taskId: string, text: string) => void;
-  updateComment: (taskId: string, commentId: string, text: string) => void;
-  deleteComment: (taskId: string, commentId: string) => Promise<any>;
+  fetchTasks: () => Promise<void>;
+  createTask: (title: string) => Promise<void>;
+  updateTask: (taskId: string, title: string, status: "pending" | "completed") => Promise<void>;
+  deleteTask: (taskId: string) => Promise<void>;
+  addSubtask: (taskId: string, title: string) => Promise<void>;
+  updateSubtask: (taskId: string, subtaskId: string, data: { title?: string; status?: "pending" | "completed" }) => Promise<void>;
+  deleteSubtask: (taskId: string, subtaskId: string) => Promise<void>;
+  addComment: (taskId: string, text: string) => Promise<void>;
+  updateComment: (taskId: string, commentId: string, text: string) => Promise<void>;
+  deleteComment: (taskId: string, commentId: string) => Promise<void>;
 }
+
 
 export const TaskContext = createContext<TaskContextType | null>(null);
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (): Promise<void> => {
     try {
       const { data } = await API.get("/tasks");
       setTasks(data);
@@ -37,8 +38,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al obtener tareas:", error);
     }
   };
-
-  const createTask = async (title: string) => {
+  
+  const createTask = async (title: string): Promise<void> => {
     try {
       await API.post("/tasks", { title });
       fetchTasks();
@@ -46,17 +47,17 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al crear tarea:", error);
     }
   };
-
-  const updateTask = async (taskId: string, title: string, status: "pending" | "completed") => {
+  
+  const updateTask = async (taskId: string, title: string, status: "pending" | "completed"): Promise<void> => {
     try {
       await API.put(`/tasks/${taskId}`, { title, status });
       fetchTasks();
-    } catch (error: any) {
-      console.error("Error al actualizar tarea:", error.response?.data || error.message);
+    } catch (error) {
+      console.error("Error al actualizar tarea:", error);
     }
   };
-
-  const deleteTask = async (taskId: string) => {
+  
+  const deleteTask = async (taskId: string): Promise<void> => {
     try {
       await API.delete(`/tasks/${taskId}`);
       fetchTasks();
@@ -64,8 +65,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al eliminar tarea:", error);
     }
   };
-
-  const addSubtask = async (taskId: string, title: string) => {
+  
+  const addSubtask = async (taskId: string, title: string): Promise<void> => {
     try {
       await API.post(`/tasks/${taskId}/subtasks`, { title });
       fetchTasks();
@@ -73,12 +74,12 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al agregar subtarea:", error);
     }
   };
-
+  
   const updateSubtask = async (
     taskId: string,
     subtaskId: string,
     data: { title?: string; status?: "pending" | "completed" }
-  ) => {
+  ): Promise<void> => {
     try {
       await API.put(`/tasks/${taskId}/subtasks/${subtaskId}`, data);
       fetchTasks();
@@ -86,8 +87,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al actualizar subtarea:", error);
     }
   };
-
-  const deleteSubtask = async (taskId: string, subtaskId: string) => {
+  
+  const deleteSubtask = async (taskId: string, subtaskId: string): Promise<void> => {
     try {
       await API.delete(`/tasks/${taskId}/subtasks/${subtaskId}`);
       fetchTasks();
@@ -95,8 +96,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al eliminar subtarea:", error);
     }
   };
-
-  const addComment = async (taskId: string, text: string) => {
+  
+  const addComment = async (taskId: string, text: string): Promise<void> => {
     try {
       await API.post(`/tasks/${taskId}/comments`, { text });
       fetchTasks();
@@ -104,8 +105,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al agregar comentario:", error);
     }
   };
-
-  const updateComment = async (taskId: string, commentId: string, text: string) => {
+  
+  const updateComment = async (taskId: string, commentId: string, text: string): Promise<void> => {
     try {
       await API.put(`/tasks/${taskId}/comments/${commentId}`, { text });
       fetchTasks();
@@ -113,7 +114,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al actualizar comentario:", error);
     }
   };
-  const deleteComment = async (taskId: string, commentId: string) => {
+  
+  const deleteComment = async (taskId: string, commentId: string): Promise<void> => {
     try {
       await API.delete(`/tasks/${taskId}/comments/${commentId}`);
       fetchTasks();
@@ -121,6 +123,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error al eliminar comentario:", error);
     }
   };
+  
   
 
   useEffect(() => {
